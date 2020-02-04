@@ -1,0 +1,26 @@
+#For customer you are moving to modern auth Skype for business will fail to connect  (well it did for us )
+#Install the PowerShell module for Sfb:
+#https://www.microsoft.com/en-us/download/details.aspx?id=39366
+
+#run powershell as admin:
+
+Set-executionpolicy remotesigned
+#then
+$sfboSession = New-CsOnlineSession -UserName user@domain.com
+Import-PSSession $sfboSession
+
+#Check modern auto isn’t already on –
+get-CsOAuthConfiguration
+
+#expect the results will be 
+#ClientAdalAuthOverride : Disallowed
+#So then run 
+
+Set-CsOAuthConfiguration -ClientAdalAuthOverride Allowed
+
+#Then check using 
+
+get-CsOAuthConfiguration
+
+#ClientAdalAuthOverride should now be allowed
+#Can take up to 24hours apparently but it took 30mins for skype to work again for me
